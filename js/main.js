@@ -11,7 +11,41 @@ document.addEventListener('DOMContentLoaded', (event) => {
   initMap(); // added 
   fetchNeighborhoods();
   fetchCuisines();
+  setSkipLink();
+  // filter element controls section (filter) panel for the small screen
+  const filterEl = document.getElementById('filter');
+  filterEl.addEventListener('click', () => {
+    const neighborEl = document.getElementById('neighborhoods-select');
+    const cuisinesEl = document.getElementById('cuisines-select');
+    neighborEl.classList.toggle('open');
+    cuisinesEl.classList.toggle('open');
+
+    // setting ARIA for the filter element
+    const y = filterEl.getAttribute('aria-expanded'); 
+    if (y === 'false') {
+      filterEl.setAttribute('aria-expanded', 'true');
+    } else {
+      filterEl.setAttribute('aria-expanded', 'false');
+    }
+  });
+
+
+  window.addEventListener('resize', () => {
+    setSkipLink();
+  });
+  
 });
+
+// necessary changes to skip link on window resize and page load
+
+setSkipLink = () => {
+  const skipLinkEl = document.getElementById('skip-link');
+  if (window.innerWidth >= 650) {
+    skipLinkEl.setAttribute('href', '#neighborhoods-select');
+  } else if (window.innerWidth < 650 && (skipLinkEl.getAttribute('href') !== '#filter')) {
+    skipLinkEl.setAttribute('href', '#filter');
+  }
+}
 
 /**
  * Fetch all neighborhoods and set their HTML.
@@ -78,7 +112,7 @@ initMap = () => {
         scrollWheelZoom: false
       });
   L.tileLayer('https://api.tiles.mapbox.com/v4/{id}/{z}/{x}/{y}.jpg70?access_token={mapboxToken}', {
-    mapboxToken: '<your MAPBOX API KEY HERE>',
+    mapboxToken: 'pk.eyJ1IjoiYmFkY29tbXVuaXN0cyIsImEiOiJjamp1M2c2eWgwcWxuM2ptOHVsc3lyeXFoIn0.DcdfI82kSnQai7-FvZ6_fA',
     maxZoom: 18,
     attribution: 'Map data &copy; <a href="https://www.openstreetmap.org/">OpenStreetMap</a> contributors, ' +
       '<a href="https://creativecommons.org/licenses/by-sa/2.0/">CC-BY-SA</a>, ' +
@@ -161,6 +195,8 @@ createRestaurantHTML = (restaurant) => {
   const image = document.createElement('img');
   image.className = 'restaurant-img';
   image.src = DBHelper.imageUrlForRestaurant(restaurant);
+  //accessibility - setting the alt tag
+  image.alt = `A picture of ${restaurant.name} restaurant`;
   li.append(image);
 
   const name = document.createElement('h1');
@@ -177,6 +213,8 @@ createRestaurantHTML = (restaurant) => {
 
   const more = document.createElement('a');
   more.innerHTML = 'View Details';
+  // setting the proper aria role
+  more.setAttribute('role','button');
   more.href = DBHelper.urlForRestaurant(restaurant);
   li.append(more)
 
@@ -196,8 +234,9 @@ addMarkersToMap = (restaurants = self.restaurants) => {
     }
     self.markers.push(marker);
   });
+}
 
-} 
+
 /* addMarkersToMap = (restaurants = self.restaurants) => {
   restaurants.forEach(restaurant => {
     // Add marker to the map

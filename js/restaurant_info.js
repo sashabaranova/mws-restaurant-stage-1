@@ -22,7 +22,7 @@ initMap = () => {
         scrollWheelZoom: false
       });
       L.tileLayer('https://api.tiles.mapbox.com/v4/{id}/{z}/{x}/{y}.jpg70?access_token={mapboxToken}', {
-        mapboxToken: '<your MAPBOX API KEY HERE>',
+        mapboxToken: 'pk.eyJ1IjoiYmFkY29tbXVuaXN0cyIsImEiOiJjamp1M2c2eWgwcWxuM2ptOHVsc3lyeXFoIn0.DcdfI82kSnQai7-FvZ6_fA',
         maxZoom: 18,
         attribution: 'Map data &copy; <a href="https://www.openstreetmap.org/">OpenStreetMap</a> contributors, ' +
           '<a href="https://creativecommons.org/licenses/by-sa/2.0/">CC-BY-SA</a>, ' +
@@ -33,7 +33,7 @@ initMap = () => {
       DBHelper.mapMarkerForRestaurant(self.restaurant, self.newMap);
     }
   });
-}  
+};  
  
 /* window.initMap = () => {
   fetchRestaurantFromURL((error, restaurant) => {
@@ -89,6 +89,8 @@ fillRestaurantHTML = (restaurant = self.restaurant) => {
   const image = document.getElementById('restaurant-img');
   image.className = 'restaurant-img'
   image.src = DBHelper.imageUrlForRestaurant(restaurant);
+  //accessibility - setting the alt tag
+  image.alt = `A picture of ${restaurant.name} restaurant`;
 
   const cuisine = document.getElementById('restaurant-cuisine');
   cuisine.innerHTML = restaurant.cuisine_type;
@@ -147,20 +149,42 @@ fillReviewsHTML = (reviews = self.restaurant.reviews) => {
  * Create review HTML and add it to the webpage.
  */
 createReviewHTML = (review) => {
+
   const li = document.createElement('li');
+  const reviewHeader = document.createElement('div');
   const name = document.createElement('p');
+  name.setAttribute('class', 'name');
   name.innerHTML = review.name;
-  li.appendChild(name);
+  reviewHeader.appendChild(name);
 
   const date = document.createElement('p');
+  date.setAttribute('class', 'date');
   date.innerHTML = review.date;
-  li.appendChild(date);
+  reviewHeader.appendChild(date);
+
+  li.appendChild(reviewHeader);
 
   const rating = document.createElement('p');
-  rating.innerHTML = `Rating: ${review.rating}`;
+  rating.setAttribute('class', 'rating');
+
+  // rating.innerHTML = `Rating: ${review.rating}`;
+  let stars = [];
+  for (let i = 0; i < 5; i++) {
+    const star = document.createElement('span');
+    star.setAttribute('class', 'star');
+    star.innerText = '\u2605';
+    rating.append(star);
+    stars.push(star);
+  }
+
+  for (let i = 0; i < review.rating; i++) {
+    stars[i].classList.add('on');
+  }
+
   li.appendChild(rating);
 
   const comments = document.createElement('p');
+  comments.setAttribute('class', 'comments');
   comments.innerHTML = review.comments;
   li.appendChild(comments);
 
@@ -172,8 +196,12 @@ createReviewHTML = (review) => {
  */
 fillBreadcrumb = (restaurant=self.restaurant) => {
   const breadcrumb = document.getElementById('breadcrumb');
+  //setting aria role
+  breadcrumb.setAttribute('aria-label', 'Breadcrumb')
   const li = document.createElement('li');
   li.innerHTML = restaurant.name;
+  //setting aria
+  li.setAttribute('aria-current', 'page')
   breadcrumb.appendChild(li);
 }
 

@@ -253,7 +253,7 @@ nav h1 a {
   display: block;
   margin: 0;
   width: 100%;
-  min-height: 248px;
+  /*min-height: 248px;*/
   min-width: 100%;
   border-radius: 7px;
 }

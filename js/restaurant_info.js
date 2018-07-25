@@ -197,11 +197,11 @@ createReviewHTML = (review) => {
 fillBreadcrumb = (restaurant=self.restaurant) => {
   const breadcrumb = document.getElementById('breadcrumb');
   //setting aria role
-  breadcrumb.setAttribute('aria-label', 'Breadcrumb')
+  // breadcrumb.setAttribute('aria-label', 'Breadcrumb')
   const li = document.createElement('li');
   li.innerHTML = restaurant.name;
   //setting aria
-  li.setAttribute('aria-current', 'page')
+  // li.setAttribute('aria-current', 'page')
   breadcrumb.appendChild(li);
 }
 
